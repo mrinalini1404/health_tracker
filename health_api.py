@@ -6,33 +6,17 @@ Created on Sat Aug 22 21:50:42 2020
 @author: mrinalini
 """
 
-'''
-import json
-import paho.mqtt.client as mqtt #import the client1
-import time
-
-def on_message(client, userdata, message):
-    #print("message received " ,str(message.payload.decode("utf-8")))
-    #print("message topic=",message.topic)
-    #print("message qos=",message.qos)
-    #print("message retain flag=",message.retain)
-    data = json.loads(message.payload)
-    print(data)
-
-broker_address="broker.mqttdashboard.com" #use external broker
-client = mqtt.Client("P1") #create new instance
-client.on_message=on_message #attach function to callback
-client.connect(broker_address) #connect to broker
-client.loop_start() #start the loop
-client.subscribe("mrinalini")
-client.publish("mrinalini","Hey")
-'''
 
 
 #!flask/bin/python
 from flask import Flask, render_template,request, redirect, url_for, session
 import pymysql
 import re
+import json
+import paho.mqtt.client as mqtt #import the client1
+import time
+
+
 app = Flask(__name__)
 
 app.secret_key = 'Mrinalini'
@@ -120,6 +104,7 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
+        doctor_name = request.form['doctor_name']
         sql = "select * from accounts where username = '"+username+"'";
         account = get_db_result(sql)
         if account:
@@ -132,7 +117,7 @@ def register():
             msg = 'Please fill out the form!'
         else:
             # Account doesnt exists and the form data is valid, now insert new account into accounts table
-            sql = "insert into accounts values(NULL, '"+username+"' , '"+password+"','"+email+"')";
+            sql = "insert into accounts values(NULL, '"+username+"' , '"+password+"','"+email+"','"+doctor_name+"')";
             execute_db(sql)
             msg = 'You have successfully registered!'
     elif request.method == 'POST':
@@ -147,9 +132,20 @@ def home():
     # Check if user is loggedin
     if 'loggedin' in session:
         # User is loggedin show them the home page
-        return render_template('home.html', username=session['username'])
+        return render_template('home.html', username=session['username'],message=on_message)
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
+    
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code {0}".format(str(rc))) 
+    client.subscribe("Mrinalini")
+
+
+def on_message(client, userdata, msg): 
+    print("Message received-> " + msg.topic + " " + str(msg.payload))  
+    return ("Message received-> " + msg.topic + " " + str(msg.payload))  
+
+
 
 @app.route('/profile')
 def profile():
@@ -163,5 +159,18 @@ def profile():
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
 
+
+
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+
+    broker_address="broker.mqttdashboard.com" #use external broker
+    client = mqtt.Client("Mrinalini") #create new instance
+    client.on_connect = on_connect  # Define callback function for successful connection
+    client.on_message = on_message #attach function to callback
+    client.connect(broker_address) #connect to broker
+    client.loop_start() #start the loop
+    #client.loop_forever()
+
+    app.run(host='localhost', port=8080, debug=True)
