@@ -145,11 +145,12 @@ def on_connect(client, userdata, flags, rc):
     #print("Connected with result codes {0}".format(str(rc))) 
     client.subscribe("Mrinalini")
 
-myGlobalMessagePayload=''
+myGlobalMessagePayload=0
 
-def on_message(client, userdata, msg): 
+def on_message(client, userdata, msg):
+    global myGlobalMessagePayload
     msg.payload = msg.payload.decode("utf-8")
-    myGlobalMessagePayload = msg.payload
+    myGlobalMessagePayload = int(msg.payload)
     #print(myGlobalMessagePayload) 
     #print(msg.topic+" "+str(msg.payload))
 
@@ -157,7 +158,7 @@ def on_message(client, userdata, msg):
 def chart_data():
     def generate_random_data():
         while True:
-            print(myGlobalMessagePayload) 
+            #print(myGlobalMessagePayload) 
             json_data = json.dumps(
                 {'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'value':myGlobalMessagePayload})
             yield f"data:{json_data}\n\n"
