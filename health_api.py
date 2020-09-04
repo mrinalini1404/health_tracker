@@ -9,15 +9,19 @@ Created on Sat Aug 22 21:50:42 2020
 
 
 #!flask/bin/python
-from flask import Flask, render_template,request, redirect, url_for, session
+from flask import Flask, render_template,request, redirect, url_for, session,Response
 import pymysql
 import re
 import json
 import paho.mqtt.client as mqtt #import the client1
 import time
-
+import json
+import random
+import time
+from datetime import datetime
 
 app = Flask(__name__)
+random.seed() 
 
 app.secret_key = 'Mrinalini'
 def get_db_result(sql):
@@ -127,24 +131,39 @@ def register():
     return render_template('register.html', msg=msg)
 
 
-@app.route('/home')
+@app.route('/home',methods=['GET'])
 def home():
     # Check if user is loggedin
     if 'loggedin' in session:
         # User is loggedin show them the home page
-        return render_template('home.html', username=session['username'],message=on_message)
+        return render_template('home.html')
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
-    
+        
+
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code {0}".format(str(rc))) 
+    #print("Connected with result codes {0}".format(str(rc))) 
     client.subscribe("Mrinalini")
 
+myGlobalMessagePayload=''
 
 def on_message(client, userdata, msg): 
-    print("Message received-> " + msg.topic + " " + str(msg.payload))  
-    return ("Message received-> " + msg.topic + " " + str(msg.payload))  
+    msg.payload = msg.payload.decode("utf-8")
+    myGlobalMessagePayload = msg.payload
+    #print(myGlobalMessagePayload) 
+    #print(msg.topic+" "+str(msg.payload))
 
+@app.route('/chart-data')
+def chart_data():
+    def generate_random_data():
+        while True:
+            print(myGlobalMessagePayload) 
+            json_data = json.dumps(
+                {'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'value':myGlobalMessagePayload})
+            yield f"data:{json_data}\n\n"
+            time.sleep(3)
+            print(json_data)
+    return Response(generate_random_data(), mimetype='text/event-stream')
 
 
 @app.route('/profile')
@@ -158,9 +177,6 @@ def profile():
         return render_template('profile.html', account=account)
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
-
-
-
 
 
 if __name__ == "__main__":
