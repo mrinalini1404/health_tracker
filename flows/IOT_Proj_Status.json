@@ -1,0 +1,1 @@
+[{"id":"2f0ebcd1.5d3bac","type":"change","z":"1612c65b.c466ca","name":"","rules":[{"t":"set","p":"payload","pt":"msg","to":"Air Contamination Possible","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":1020,"y":180,"wires":[[]]}]

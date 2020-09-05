@@ -143,15 +143,15 @@ def home():
 
 def on_connect(client, userdata, flags, rc):
     #print("Connected with result codes {0}".format(str(rc))) 
-    client.subscribe("Mrinalini")
+    client.subscribe("Dialysis_Sensors")
 
-myGlobalMessagePayload=0
+myGlobalMessagePayload={}
 
 def on_message(client, userdata, msg):
     global myGlobalMessagePayload
-    msg.payload = msg.payload.decode("utf-8")
-    myGlobalMessagePayload = int(msg.payload)
-    #print(myGlobalMessagePayload) 
+    msg.payload = str(msg.payload.decode("utf-8","ignore"))
+    myGlobalMessagePayload = json.loads(msg.payload)
+    print(myGlobalMessagePayload) 
     #print(msg.topic+" "+str(msg.payload))
 
 @app.route('/chart-data')
@@ -183,7 +183,7 @@ def profile():
 if __name__ == "__main__":
 
     broker_address="broker.mqttdashboard.com" #use external broker
-    client = mqtt.Client("Mrinalini") #create new instance
+    client = mqtt.Client("Dialysis_Sensors") #create new instance
     client.on_connect = on_connect  # Define callback function for successful connection
     client.on_message = on_message #attach function to callback
     client.connect(broker_address) #connect to broker
