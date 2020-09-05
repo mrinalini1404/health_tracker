@@ -6,23 +6,17 @@ Created on Sat Aug 22 21:50:42 2020
 @author: mrinalini
 """
 
-
-
 #!flask/bin/python
 from flask import Flask, render_template,request, redirect, url_for, session,Response
 import pymysql
 import re
 import json
-import paho.mqtt.client as mqtt #import the client1
-import time
+import paho.mqtt.client as mqtt
 import json
-import random
 import time
 from datetime import datetime
 
 app = Flask(__name__)
-random.seed() 
-
 app.secret_key = 'Mrinalini'
 def get_db_result(sql):
     connection = pymysql.connect(host='127.0.0.1',
@@ -56,7 +50,6 @@ def execute_db(sql):
             cursor.execute(sql)
             connection.commit()
             connection.close()
-
     except:
         pass
 
@@ -160,7 +153,7 @@ def chart_data():
         while True:
             #print(myGlobalMessagePayload) 
             json_data = json.dumps(
-                {'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'value':myGlobalMessagePayload})
+                {'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'BUN':myGlobalMessagePayload['BUN'],'Air_Bubble':myGlobalMessagePayload['Air_Bubble'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Art_Gas':myGlobalMessagePayload['Art_Gas']})
             yield f"data:{json_data}\n\n"
             time.sleep(3)
             print(json_data)
