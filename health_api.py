@@ -11,7 +11,7 @@ from flask import Flask, render_template,request, redirect, url_for, session,Res
 import pymysql
 import re
 import json
-import paho.mqtt.client as mqtt
+import paho.mqtt.client as paho
 import json
 import time
 from datetime import datetime
@@ -101,7 +101,6 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        doctor_name = request.form['doctor_name']
         sql = "select * from accounts where username = '"+username+"'";
         account = get_db_result(sql)
         if account:
@@ -114,7 +113,7 @@ def register():
             msg = 'Please fill out the form!'
         else:
             # Account doesnt exists and the form data is valid, now insert new account into accounts table
-            sql = "insert into accounts values(NULL, '"+username+"' , '"+password+"','"+email+"','"+doctor_name+"')";
+            sql = "insert into accounts values(NULL, '"+username+"' , '"+password+"','"+email+"')";
             execute_db(sql)
             msg = 'You have successfully registered!'
     elif request.method == 'POST':
@@ -133,31 +132,47 @@ def home():
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
         
-
-def on_connect(client, userdata, flags, rc):
+'''
+def on_connect_sensors(client, userdata, flags, rc):
     #print("Connected with result codes {0}".format(str(rc))) 
     client.subscribe("Dialysis_Sensors")
-
+'''
 myGlobalMessagePayload={}
 
-def on_message(client, userdata, msg):
+def on_message_sensors(client, userdata, msg):
     global myGlobalMessagePayload
     msg.payload = str(msg.payload.decode("utf-8","ignore"))
     myGlobalMessagePayload = json.loads(msg.payload)
-    print(myGlobalMessagePayload) 
-    #print(msg.topic+" "+str(msg.payload))
+    print(myGlobalMessagePayload)
 
+'''
+def on_connect_status(client2, userdata, flags, rc):
+    #print("Connected with result codes {0}".format(str(rc))) 
+    client.subscribe("Patient_Status")
+'''
+PatientDeets={}
+
+def on_message_status(client2, userdata, msg):
+    global PatientDeets
+    msg.payload = str(msg.payload.decode("utf-8","ignore"))
+    PatientDeets = json.loads(msg.payload)
+    print(PatientDeets)
+
+def on_message(mosq, obj, msg):
+    #print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
+    print(0)
+    
 @app.route('/chart-data')
 def chart_data():
     def generate_random_data():
         while True:
-            #print(myGlobalMessagePayload) 
-            json_data = json.dumps(
-                {'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'BUN':myGlobalMessagePayload['BUN'],'Air_Bubble':myGlobalMessagePayload['Air_Bubble'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Art_Gas':myGlobalMessagePayload['Art_Gas']})
+            print(myGlobalMessagePayload) 
+            json_data = json.dumps({'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'BUN':myGlobalMessagePayload['BUN'],'Air_Bubble':myGlobalMessagePayload['Air_Bubble'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Art_Gas':myGlobalMessagePayload['Art_Gas'],'stat':PatientDeets['stat'],'value':PatientDeets['value']})
             yield f"data:{json_data}\n\n"
             time.sleep(3)
             print(json_data)
     return Response(generate_random_data(), mimetype='text/event-stream')
+
 
 
 @app.route('/profile')
@@ -172,15 +187,38 @@ def profile():
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
 
+'''
+@app.route('/graph',methods=['GET'])
+def graph():
+    # Check if user is loggedin
+    if 'loggedin' in session:
+        # User is loggedin show them the home page
+        return render_template('graph.html')
+    # User is not loggedin redirect to login page
+'''
 
 if __name__ == "__main__":
-
+    
+    mqttc = paho.Client()
+    mqttc.message_callback_add('health/Dialysis_Sensors', on_message_sensors)
+    mqttc.message_callback_add('health/Patient_Status', on_message_status)
+    mqttc.on_message = on_message
+    mqttc.connect("broker.mqttdashboard.com")
+    mqttc.subscribe("health/#")
+    mqttc.loop_start()
+    '''
     broker_address="broker.mqttdashboard.com" #use external broker
     client = mqtt.Client("Dialysis_Sensors") #create new instance
-    client.on_connect = on_connect  # Define callback function for successful connection
-    client.on_message = on_message #attach function to callback
-    client.connect(broker_address) #connect to broker
+    #client.on_connect = on_connect_sensor  # Define callback function for successful connection
+    #client.on_message = on_message_sensor #attach function to callback
+    #client.connect(broker_address) #connect to broker
     client.loop_start() #start the loop
+    
+    client2 = mqtt.Client("Patient_Status") #create new instance
+    client2.on_connect = on_connect_status  # Define callback function for successful connection
+    client2.on_message = on_message_status #attach function to callback
+    client2.connect(broker_address) #connect to broker
+    client2.loop_start() #start the loop
     #client.loop_forever()
-
+    '''
     app.run(host='localhost', port=8080, debug=True)

@@ -3,17 +3,8 @@
 {% block title %}Graph{% endblock %}
 
 {% block content %}
+<h2>Home Page</h2>
 
-<h2><i class="fas fa-heartbeat"></i> Patient Status </h2>
-<div class='container'>
-<b><h>The status:</h></b>
-<p id=status></p>
-<b><h>The value</h></b>
-<p id=value></p>
-</div>
-
-
-<h2><i class="fas fa-chart-line"></i>   Graphs </h2>
 <div class='container'>
 <h>The Blood Gas value</h><p id=result></p>
 </div>
@@ -24,11 +15,6 @@ const source2 = new EventSource("/chart-data");
 source2.onmessage = function (event) {
     const data = JSON.parse(event.data);
     $("#result").text(data.Art_Gas);
-    $('#status').text(data.stat);
-    $('#value').text(data.value);
-    if(data.stat=='Critical'){
-    	alert("It's critical!!");
-    }
 }
 </script>
 
