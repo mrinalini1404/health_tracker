@@ -1,1 +1,362 @@
-[{"id":"2f0ebcd1.5d3bac","type":"change","z":"1612c65b.c466ca","name":"","rules":[{"t":"set","p":"payload","pt":"msg","to":"Air Contamination Possible","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":1020,"y":180,"wires":[[]]}]
+[
+    {
+        "id": "1612c65b.c466ca",
+        "type": "tab",
+        "label": "IOT_Proj_Status_Msgs",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "62dd9c42.f9d33c",
+        "type": "function",
+        "z": "1612c65b.c466ca",
+        "name": "Blood Urea Nitrogen",
+        "func": "/*var t = msg.payload;\nmsg.payload = {\n    value: t,\n    prev_value: flow.get(\"prevValue\")\n}*/\nvar value = msg.payload.BUN;\nvar prevValue = flow.get(\"prevValue\");\nmsg.payload = {}\n//var prevDecline = flow.get(\"prevDecline\");\nmsg.payload.value = value;\nif ((prevValue - value) > 20) {\n    msg.payload = \"Sharp BUN decline\";\n    msg.payload.BUN_Decline = prevValue - value;\n    return msg;\n}\nflow.set(\"prevValue\", value);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 980,
+        "y": 140,
+        "wires": [
+            [
+                "919540e9.6a74e8"
+            ]
+        ]
+    },
+    {
+        "id": "ff3d819f.f856e",
+        "type": "switch",
+        "z": "1612c65b.c466ca",
+        "name": "Right Ventricular Air",
+        "property": "payload.Air_Bubble",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "0.05",
+                "vt": "num",
+                "v2": "0.5",
+                "v2t": "num"
+            },
+            {
+                "t": "btwn",
+                "v": "0.5",
+                "vt": "num",
+                "v2": "2.0",
+                "v2t": "num"
+            },
+            {
+                "t": "gt",
+                "v": "2.0",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 540,
+        "y": 220,
+        "wires": [
+            [
+                "2f0ebcd1.5d3bac"
+            ],
+            [
+                "4cd34596.8df7cc",
+                "2c55dc7e.07ee1c"
+            ],
+            [
+                "9d1b66a7.8601f8",
+                "4cd34596.8df7cc"
+            ]
+        ]
+    },
+    {
+        "id": "4cd34596.8df7cc",
+        "type": "switch",
+        "z": "1612c65b.c466ca",
+        "name": "Oxygen Levels",
+        "property": "payload.Pulse_Oximetry",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "94",
+                "vt": "str"
+            },
+            {
+                "t": "lt",
+                "v": "92",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 520,
+        "y": 320,
+        "wires": [
+            [
+                "30a5803c.90da38"
+            ],
+            [
+                "8990ec15.f24558"
+            ]
+        ]
+    },
+    {
+        "id": "2c55dc7e.07ee1c",
+        "type": "change",
+        "z": "1612c65b.c466ca",
+        "name": "Medium Air Contamination",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Medium Air Contamination",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1000,
+        "y": 220,
+        "wires": [
+            [
+                "919540e9.6a74e8"
+            ]
+        ]
+    },
+    {
+        "id": "30a5803c.90da38",
+        "type": "change",
+        "z": "1612c65b.c466ca",
+        "name": "Low O2",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Low O2",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 940,
+        "y": 300,
+        "wires": [
+            [
+                "919540e9.6a74e8"
+            ]
+        ]
+    },
+    {
+        "id": "2f0ebcd1.5d3bac",
+        "type": "change",
+        "z": "1612c65b.c466ca",
+        "name": "Air Contamination Possible",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Air Contamination Possible",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1000,
+        "y": 180,
+        "wires": [
+            [
+                "919540e9.6a74e8"
+            ]
+        ]
+    },
+    {
+        "id": "9d1b66a7.8601f8",
+        "type": "change",
+        "z": "1612c65b.c466ca",
+        "name": "Fatal Air Contamination",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Fatal Air Contamination",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 990,
+        "y": 260,
+        "wires": [
+            [
+                "919540e9.6a74e8"
+            ]
+        ]
+    },
+    {
+        "id": "2b2b1484.77eaec",
+        "type": "mqtt in",
+        "z": "1612c65b.c466ca",
+        "name": "",
+        "topic": "Dialysis_Sensors",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "9ad3f9b9.8b4548",
+        "x": 100,
+        "y": 220,
+        "wires": [
+            [
+                "c5881979.b1a9c"
+            ]
+        ]
+    },
+    {
+        "id": "c5881979.b1a9c",
+        "type": "json",
+        "z": "1612c65b.c466ca",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 250,
+        "y": 220,
+        "wires": [
+            [
+                "ff3d819f.f856e",
+                "62dd9c42.f9d33c",
+                "4cd34596.8df7cc"
+            ]
+        ]
+    },
+    {
+        "id": "8990ec15.f24558",
+        "type": "change",
+        "z": "1612c65b.c466ca",
+        "name": "Potential Hypoxemia",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Potential Hypoxemia",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 980,
+        "y": 340,
+        "wires": [
+            [
+                "919540e9.6a74e8"
+            ]
+        ]
+    },
+    {
+        "id": "919540e9.6a74e8",
+        "type": "change",
+        "z": "1612c65b.c466ca",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.value",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload.stat",
+                "pt": "msg",
+                "to": "Critical",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1240,
+        "y": 260,
+        "wires": [
+            [
+                "c2a31f64.c878f8"
+            ]
+        ]
+    },
+    {
+        "id": "c2a31f64.c878f8",
+        "type": "json",
+        "z": "1612c65b.c466ca",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1160,
+        "y": 400,
+        "wires": [
+            [
+                "7a43d887.a6b688"
+            ]
+        ]
+    },
+    {
+        "id": "7a43d887.a6b688",
+        "type": "mqtt out",
+        "z": "1612c65b.c466ca",
+        "name": "",
+        "topic": "Patient_Status",
+        "qos": "",
+        "retain": "",
+        "broker": "9ad3f9b9.8b4548",
+        "x": 1070,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "9ad3f9b9.8b4548",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "broker.mqttdashboard.com",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
