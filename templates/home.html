@@ -15,7 +15,11 @@
 
 <h2><i class="fas fa-chart-line"></i>   Graphs </h2>
 <div class='container'>
-<h>The Blood Gas value</h><p id=result></p>
+<h>Liquid Temperature (°F): </h><p id=result></p>
+</div>
+
+<div class='container'>
+<h>Body Temperature (°F):</h><p id=body_temp></p>
 </div>
 
 <script type=text/javascript>
@@ -23,12 +27,15 @@ const context2 = document.getElementById('result');
 const source2 = new EventSource("/chart-data");
 source2.onmessage = function (event) {
     const data = JSON.parse(event.data);
-    $("#result").text(data.Art_Gas);
+    $("#result").text(data.Liquid_Temp);
+    $("#body_temp").text(data.Body_Temp);
     $('#status').text(data.stat);
     $('#value').text(data.value);
+    /*
     if(data.stat=='Critical'){
     	alert("It's critical!!");
     }
+    */
 }
 </script>
 
@@ -56,7 +63,7 @@ source2.onmessage = function (event) {
             data: {
                 labels: [],
                 datasets: [{
-                    label: "Blood Urea Nitrogen",
+                    label: "Pulse oximetry",
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
                     data: [],
@@ -109,7 +116,7 @@ source2.onmessage = function (event) {
                 config.data.datasets[0].data.shift();
             }
             config.data.labels.push(data.time);
-            config.data.datasets[0].data.push(data.BUN);
+            config.data.datasets[0].data.push(data.Pulse_Oximetry);
             lineChart.update();
         }
     });
@@ -135,7 +142,7 @@ source2.onmessage = function (event) {
             data: {
                 labels: [],
                 datasets: [{
-                    label: "Air bubble concentration",
+                    label: "Blood Pressure",
                     backgroundColor: 'rgb(255, 190, 132)',
                     borderColor: 'rgb(255, 190, 132)',
                     data: [],
@@ -188,7 +195,7 @@ source2.onmessage = function (event) {
                 config1.data.datasets[0].data.shift();
             }
             config1.data.labels.push(data.time);
-            config1.data.datasets[0].data.push(data.Air_Bubble);
+            config1.data.datasets[0].data.push(data.Blood_Pressure);
             lineChart1.update();
         }
     });
@@ -214,7 +221,7 @@ source2.onmessage = function (event) {
             data: {
                 labels: [],
                 datasets: [{
-                    label: "Pulse oximetry",
+                    label: "Pulse",
                     backgroundColor: 'rgb(140, 219, 209)',
                     borderColor: 'rgb(140, 219, 209)',
                     data: [],
@@ -267,7 +274,7 @@ source2.onmessage = function (event) {
                 config2.data.datasets[0].data.shift();
             }
             config2.data.labels.push(data.time);
-            config2.data.datasets[0].data.push(data.Pulse_Oximetry);
+            config2.data.datasets[0].data.push(data.Pulse);
             lineChart2.update();
         }
     });

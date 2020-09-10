@@ -167,7 +167,7 @@ def chart_data():
     def generate_random_data():
         while True:
             print(myGlobalMessagePayload) 
-            json_data = json.dumps({'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'BUN':myGlobalMessagePayload['BUN'],'Air_Bubble':myGlobalMessagePayload['Air_Bubble'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Art_Gas':myGlobalMessagePayload['Art_Gas'],'stat':PatientDeets['stat'],'value':PatientDeets['value']})
+            json_data = json.dumps({'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'Body_Temp':myGlobalMessagePayload['Body_Temp'],'Liquid_Temp':myGlobalMessagePayload['Liquid_Temp'],'Blood_Pressure':myGlobalMessagePayload['Blood_Pressure'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Pulse':myGlobalMessagePayload['Pulse'],'stat':PatientDeets['stat'],'value':PatientDeets['value']})
             yield f"data:{json_data}\n\n"
             time.sleep(3)
             print(json_data)
