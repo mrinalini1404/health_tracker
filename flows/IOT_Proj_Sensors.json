@@ -4,7 +4,7 @@
         "type": "function",
         "z": "7c4a7429.bafd84",
         "name": "",
-        "func": "//BUN = Math.random()*250;\nAir_Bubble = Math.floor(Math.random()*1.1);\nPulse_Oximetry = 90 + Math.random()*10;\nPulse = 40 + Math.random()*150;\n//Art_Gas = 20 + Math.random()*100;\nLiquid_Temp = 30 + Math.random()*10;\nBody_Temp = 90 + Math.random()*15;\nmsg.payload = {\n//    \"BUN\" : BUN,\n    \"Air_Bubble\" : Air_Bubble,\n    \"Pulse_Oximetry\" : Pulse_Oximetry,\n    \"Pulse\" : Pulse,\n//    \"Art_Gas\" : Art_Gas,\n    \"Liquid_Temp\" : Liquid_Temp,\n    \"Body_Temp\" : Body_Temp\n}\nreturn msg;",
+        "func": "//BUN = Math.random()*250;\nAir_Bubble = Math.floor(Math.random()*1.1);\nPulse_Oximetry = 90 + Math.random()*10;\nPulse = 40 + Math.random()*150;\n//Art_Gas = 20 + Math.random()*100;\nLiquid_Temp = 30 + Math.random()*10;\nBody_Temp = 90 + Math.random()*15;\nBlood_Pressure = 70 + Math.random()*100;\nmsg.payload = {\n//    \"BUN\" : BUN,\n    \"Air_Bubble\" : Air_Bubble,\n    \"Pulse_Oximetry\" : Pulse_Oximetry,\n    \"Pulse\" : Pulse,\n//    \"Art_Gas\" : Art_Gas,\n    \"Liquid_Temp\" : Liquid_Temp,\n    \"Body_Temp\" : Body_Temp,\n    \"Blood_Pressure\" : Blood_Pressure\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
