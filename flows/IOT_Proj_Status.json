@@ -1,1 +1,596 @@
-[{"id":"29d8f732.8f0578","type":"tab","label":"IOT_Proj_Status_Msgs","disabled":false,"info":""},{"id":"7e3ad2f3.4c93cc","type":"function","z":"29d8f732.8f0578","name":"Blood Urea Nitrogen","func":"/*var t = msg.payload;\nmsg.payload = {\n    value: t,\n    prev_value: flow.get(\"prevValue\")\n}*/\nvar value = msg.payload.BUN;\nvar prevValue = flow.get(\"prevValue\");\nmsg.payload = {}\n//var prevDecline = flow.get(\"prevDecline\");\nmsg.payload.value = value;\nif ((prevValue - value) > 20) {\n    msg.payload = \"Sharp BUN decline\";\n    msg.payload.BUN_Decline = prevValue - value;\n    return msg;\n}\nflow.set(\"prevValue\", value);\nreturn msg;","outputs":1,"noerr":0,"initialize":"","finalize":"","x":980,"y":140,"wires":[["e9c6bcd8.03d96"]]},{"id":"fb92ef56.6316b","type":"switch","z":"29d8f732.8f0578","name":"Right Ventricular Air","property":"payload.Air_Bubble","propertyType":"msg","rules":[{"t":"btwn","v":"0.05","vt":"num","v2":"0.5","v2t":"num"},{"t":"btwn","v":"0.5","vt":"num","v2":"2.0","v2t":"num"},{"t":"gt","v":"2.0","vt":"str"}],"checkall":"true","repair":false,"outputs":3,"x":570,"y":240,"wires":[["d7eff74d.072e78"],["df6242b5.b519b","c4dcf5c0.93b7d8"],["7edf5239.59632c","df6242b5.b519b"]]},{"id":"df6242b5.b519b","type":"switch","z":"29d8f732.8f0578","name":"Oxygen Levels","property":"payload.Pulse_Oximetry","propertyType":"msg","rules":[{"t":"lt","v":"94","vt":"str"},{"t":"lt","v":"92","vt":"str"}],"checkall":"true","repair":false,"outputs":2,"x":600,"y":380,"wires":[["b55cb55e.0ec2c8"],["8305f369.e4784"]]},{"id":"c4dcf5c0.93b7d8","type":"change","z":"29d8f732.8f0578","name":"Medium Air Contamination","rules":[{"t":"set","p":"payload","pt":"msg","to":"Medium Air Contamination","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":1000,"y":220,"wires":[["e9c6bcd8.03d96"]]},{"id":"b55cb55e.0ec2c8","type":"change","z":"29d8f732.8f0578","name":"Low O2","rules":[{"t":"set","p":"payload","pt":"msg","to":"Low O2","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":940,"y":300,"wires":[["e9c6bcd8.03d96"]]},{"id":"d7eff74d.072e78","type":"change","z":"29d8f732.8f0578","name":"Air Contamination Possible","rules":[{"t":"set","p":"payload","pt":"msg","to":"Air Contamination Possible","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":1000,"y":180,"wires":[["e9c6bcd8.03d96"]]},{"id":"7edf5239.59632c","type":"change","z":"29d8f732.8f0578","name":"Fatal Air Contamination","rules":[{"t":"set","p":"payload","pt":"msg","to":"Fatal Air Contamination","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":990,"y":260,"wires":[["e9c6bcd8.03d96"]]},{"id":"36838940.306e06","type":"mqtt in","z":"29d8f732.8f0578","name":"","topic":"health/Dialysis_Sensors","qos":"2","datatype":"auto","broker":"2e874138.b00a4e","x":120,"y":220,"wires":[["135de93.d10d817"]]},{"id":"135de93.d10d817","type":"json","z":"29d8f732.8f0578","name":"","property":"payload","action":"","pretty":false,"x":310,"y":220,"wires":[["fb92ef56.6316b","7e3ad2f3.4c93cc","df6242b5.b519b"]]},{"id":"8305f369.e4784","type":"change","z":"29d8f732.8f0578","name":"Potential Hypoxemia","rules":[{"t":"set","p":"payload","pt":"msg","to":"Potential Hypoxemia","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":980,"y":340,"wires":[["e9c6bcd8.03d96"]]},{"id":"e9c6bcd8.03d96","type":"change","z":"29d8f732.8f0578","name":"","rules":[{"t":"move","p":"payload","pt":"msg","to":"payload.value","tot":"msg"},{"t":"set","p":"payload.stat","pt":"msg","to":"Critical","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":1240,"y":260,"wires":[["f8557b25.33ae08"]]},{"id":"f8557b25.33ae08","type":"json","z":"29d8f732.8f0578","name":"","property":"payload","action":"","pretty":false,"x":1160,"y":400,"wires":[["6d55b0fa.1faa4"]]},{"id":"6d55b0fa.1faa4","type":"mqtt out","z":"29d8f732.8f0578","name":"","topic":"health/Patient_Status","qos":"","retain":"","broker":"2e874138.b00a4e","x":1090,"y":540,"wires":[]},{"id":"2e874138.b00a4e","type":"mqtt-broker","z":"","name":"","broker":"broker.mqttdashboard.com","port":"1883","clientid":"","usetls":false,"compatmode":false,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""}]
+[
+    {
+        "id": "ed056719.eefb88",
+        "type": "tab",
+        "label": "IOT_Proj_Status_Msgs",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "f172b2c0.607ff",
+        "type": "function",
+        "z": "ed056719.eefb88",
+        "name": "Blood Urea Nitrogen",
+        "func": "/*var t = msg.payload;\nmsg.payload = {\n    value: t,\n    prev_value: flow.get(\"prevValue\")\n}*/\nvar value = msg.payload.BUN;\nvar prevValue = flow.get(\"prevValue\");\nmsg.payload = {}\n//var prevDecline = flow.get(\"prevDecline\");\nmsg.payload.value = value;\nif ((prevValue - value) > 20) {\n    msg.payload = \"Sharp BUN decline\";\n    msg.payload.BUN_Decline = prevValue - value;\n    return msg;\n}\nflow.set(\"prevValue\", value);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 980,
+        "y": 20,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "207d4e61.cc1baa",
+        "type": "switch",
+        "z": "ed056719.eefb88",
+        "name": "Oxygen Levels",
+        "property": "payload.Pulse_Oximetry",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "92",
+                "vt": "str"
+            },
+            {
+                "t": "lt",
+                "v": "94",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 600,
+        "y": 140,
+        "wires": [
+            [
+                "f4786232.84cd6"
+            ],
+            [
+                "14eb3998.c3654e"
+            ]
+        ]
+    },
+    {
+        "id": "14eb3998.c3654e",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "Low O2",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Low O2",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 940,
+        "y": 160,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "cff61120.20cb88",
+        "type": "mqtt in",
+        "z": "ed056719.eefb88",
+        "name": "",
+        "topic": "health/Dialysis_Sensors",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "472e422f.42e324",
+        "x": 120,
+        "y": 220,
+        "wires": [
+            [
+                "56fc1e93.bb59b8"
+            ]
+        ]
+    },
+    {
+        "id": "56fc1e93.bb59b8",
+        "type": "json",
+        "z": "ed056719.eefb88",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 310,
+        "y": 220,
+        "wires": [
+            [
+                "207d4e61.cc1baa",
+                "c40beabe.e8821",
+                "ff17c24c.9697e8",
+                "11e259cb.bd5c0e",
+                "43f5b1fe.92fc58",
+                "dc488506.8ce05"
+            ]
+        ]
+    },
+    {
+        "id": "f4786232.84cd6",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "Potential Hypoxemia",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Potential Hypoxemia",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 980,
+        "y": 120,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "4354be63.c9382",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.value",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload.stat",
+                "pt": "msg",
+                "to": "Critical",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1300,
+        "y": 200,
+        "wires": [
+            [
+                "69a23fd0.174008"
+            ]
+        ]
+    },
+    {
+        "id": "69a23fd0.174008",
+        "type": "json",
+        "z": "ed056719.eefb88",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1160,
+        "y": 400,
+        "wires": [
+            [
+                "d0e72026.775b3",
+                "e69f2162.54f348"
+            ]
+        ]
+    },
+    {
+        "id": "d0e72026.775b3",
+        "type": "mqtt out",
+        "z": "ed056719.eefb88",
+        "name": "",
+        "topic": "health/Patient_Status",
+        "qos": "",
+        "retain": "",
+        "broker": "472e422f.42e324",
+        "x": 1090,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "e69f2162.54f348",
+        "type": "debug",
+        "z": "ed056719.eefb88",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "c40beabe.e8821",
+        "type": "switch",
+        "z": "ed056719.eefb88",
+        "name": "Air Bubble",
+        "property": "payload.Air_Bubble",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 590,
+        "y": 80,
+        "wires": [
+            [
+                "4c9082c8.b87ac4"
+            ]
+        ]
+    },
+    {
+        "id": "4c9082c8.b87ac4",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "Air Contamination",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Air Bubble Present",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 970,
+        "y": 80,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "ff17c24c.9697e8",
+        "type": "switch",
+        "z": "ed056719.eefb88",
+        "name": "Pulse",
+        "property": "payload.Pulse",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "40",
+                "vt": "num",
+                "v2": "60",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 570,
+        "y": 200,
+        "wires": [
+            [],
+            [
+                "27c4451f.d8a0e2"
+            ]
+        ]
+    },
+    {
+        "id": "27c4451f.d8a0e2",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "Abnormal Pulse",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Abnormal Pulse",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 960,
+        "y": 200,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "11e259cb.bd5c0e",
+        "type": "switch",
+        "z": "ed056719.eefb88",
+        "name": "Solvent Temperature",
+        "property": "payload.Liquid_Temp",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "34",
+                "vt": "num",
+                "v2": "35.5",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 620,
+        "y": 240,
+        "wires": [
+            [],
+            [
+                "113442d3.aa2245"
+            ]
+        ]
+    },
+    {
+        "id": "113442d3.aa2245",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "Undesirable Solvent Temperature",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Undesirable Solvent Temperature",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1020,
+        "y": 240,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "43f5b1fe.92fc58",
+        "type": "switch",
+        "z": "ed056719.eefb88",
+        "name": "Body Temperature",
+        "property": "payload.Body_Temp",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "97.5",
+                "vt": "str"
+            },
+            {
+                "t": "gt",
+                "v": "99.5",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 610,
+        "y": 300,
+        "wires": [
+            [
+                "b409fbde.845fd"
+            ],
+            [
+                "249e4654.eea9ea"
+            ]
+        ]
+    },
+    {
+        "id": "249e4654.eea9ea",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "High Body Temperature",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "High Body Temperature",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 990,
+        "y": 320,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "b409fbde.845fd",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "Low Body Temperature",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Low Body Temperature",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 990,
+        "y": 280,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "dc488506.8ce05",
+        "type": "switch",
+        "z": "ed056719.eefb88",
+        "name": "Blood Pressure Systolic",
+        "property": "payload.BP_Systolic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "90",
+                "vt": "str"
+            },
+            {
+                "t": "gt",
+                "v": "125",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 630,
+        "y": 380,
+        "wires": [
+            [
+                "659522db.6d2634"
+            ],
+            [
+                "2b48b2ba.59989e"
+            ]
+        ]
+    },
+    {
+        "id": "659522db.6d2634",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "Low BP",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Low BP",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 940,
+        "y": 360,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "2b48b2ba.59989e",
+        "type": "change",
+        "z": "ed056719.eefb88",
+        "name": "High BP",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "High BP",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 940,
+        "y": 400,
+        "wires": [
+            [
+                "4354be63.c9382"
+            ]
+        ]
+    },
+    {
+        "id": "472e422f.42e324",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "broker.mqttdashboard.com",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
