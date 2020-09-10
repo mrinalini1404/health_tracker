@@ -1,5 +1,70 @@
 [
     {
+        "id": "7c4a7429.bafd84",
+        "type": "tab",
+        "label": "IOT_Proj_Sensors",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "7d187680.608aa8",
+        "type": "inject",
+        "z": "7c4a7429.bafd84",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 260,
+        "wires": [
+            [
+                "9ddd8283.0e0bf8"
+            ]
+        ]
+    },
+    {
+        "id": "fa52184f.afd388",
+        "type": "mqtt out",
+        "z": "7c4a7429.bafd84",
+        "name": "",
+        "topic": "health/Dialysis_Sensors",
+        "qos": "",
+        "retain": "",
+        "broker": "6822706.e0bf31",
+        "x": 970,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "3f485075.cb459",
+        "type": "json",
+        "z": "7c4a7429.bafd84",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 690,
+        "y": 260,
+        "wires": [
+            [
+                "fa52184f.afd388"
+            ]
+        ]
+    },
+    {
         "id": "9ddd8283.0e0bf8",
         "type": "function",
         "z": "7c4a7429.bafd84",
@@ -16,5 +81,27 @@
                 "3f485075.cb459"
             ]
         ]
+    },
+    {
+        "id": "6822706.e0bf31",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "broker.mqttdashboard.com",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
     }
 ]
