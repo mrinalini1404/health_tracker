@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Aug 22 21:50:42 2020
 
-@author: mrinalini
-"""
 
 #!flask/bin/python
 from flask import Flask, render_template,request, redirect, url_for, session,Response
@@ -15,6 +11,8 @@ import paho.mqtt.client as paho
 import json
 import time
 from datetime import datetime
+import requests 
+import json
 
 app = Flask(__name__)
 app.secret_key = 'Mrinalini'
@@ -35,7 +33,8 @@ def get_db_result(sql):
         return []
 
     return result
-
+  
+        
 def get_db_result_as_dict(sql):
     return dict((x, y) for x, y in get_db_result(sql))
 
@@ -54,7 +53,7 @@ def execute_db(sql):
         pass
 
 
-@app.route('/login/', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     # Output message if something goes wrong...
     msg = ''
@@ -167,7 +166,7 @@ def chart_data():
     def generate_random_data():
         while True:
             print(myGlobalMessagePayload) 
-            json_data = json.dumps({'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'Body_Temp':myGlobalMessagePayload['Body_Temp'],'Liquid_Temp':myGlobalMessagePayload['Liquid_Temp'],'Blood_Pressure':myGlobalMessagePayload['Blood_Pressure'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Pulse':myGlobalMessagePayload['Pulse'],'stat':PatientDeets['stat'],'value':PatientDeets['value']})
+            json_data = json.dumps({'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'Haemoglobin':myGlobalMessagePayload['Haemoglobin'],'Body_Temp':myGlobalMessagePayload['Body_Temp'],'BUN':myGlobalMessagePayload['BUN'],'Liquid_Temp':myGlobalMessagePayload['Liquid_Temp'],'Blood_Pressure':myGlobalMessagePayload['Blood_Pressure'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Pulse':myGlobalMessagePayload['Pulse'],'stat':PatientDeets['stat'],'value':PatientDeets['value']})
             yield f"data:{json_data}\n\n"
             time.sleep(3)
             print(json_data)
@@ -187,15 +186,6 @@ def profile():
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
 
-'''
-@app.route('/graph',methods=['GET'])
-def graph():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # User is loggedin show them the home page
-        return render_template('graph.html')
-    # User is not loggedin redirect to login page
-'''
 
 if __name__ == "__main__":
     
@@ -206,19 +196,5 @@ if __name__ == "__main__":
     mqttc.connect("broker.mqttdashboard.com")
     mqttc.subscribe("health/#")
     mqttc.loop_start()
-    '''
-    broker_address="broker.mqttdashboard.com" #use external broker
-    client = mqtt.Client("Dialysis_Sensors") #create new instance
-    #client.on_connect = on_connect_sensor  # Define callback function for successful connection
-    #client.on_message = on_message_sensor #attach function to callback
-    #client.connect(broker_address) #connect to broker
-    client.loop_start() #start the loop
-    
-    client2 = mqtt.Client("Patient_Status") #create new instance
-    client2.on_connect = on_connect_status  # Define callback function for successful connection
-    client2.on_message = on_message_status #attach function to callback
-    client2.connect(broker_address) #connect to broker
-    client2.loop_start() #start the loop
-    #client.loop_forever()
-    '''
+
     app.run(host='localhost', port=8080, debug=True)
