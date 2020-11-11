@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+{% block title %}Details{% endblock %}
+
+{% block content %}
+<h2>Details history</h2>
+<div>
+	<center>
+    <table style="width:100%"> 
+    <thead> 
+    <tr> 
+    	<th></th>
+    	<th>Time</th>
+        <th>Haemoglobin</th> 
+        <th>Body Temp</th> 
+        <th>BUN</th> 
+        <th>Liquid Temp</th> 
+        <th>Blood Pressure</th> 
+        <th>Pulse Oximetry</th> 
+        <th>Pulse</th>  
+    </tr> 
+    </thead> 
+    <tbody> 
+        {% for row in value %}  
+            <tr> 
+            	<td></td>
+            	<td>{{row[9]}}</td>
+                <td>{{row[2]}}</td> 
+                <td>{{row[3]}}</td>
+                <td>{{row[4]}}</td> 
+                <td>{{row[5]}}</td>
+                <td>{{row[6]}}</td> 
+                <td>{{row[7]}}</td>
+                <td>{{row[8]}}</td> 
+            </tr> 
+        {% endfor %} 
+    </tbody> 
+</table> 
+</center>
+</div>
+{% endblock %}

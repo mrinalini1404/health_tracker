@@ -90,6 +90,14 @@ def logout():
    return redirect(url_for('login'))
 
 
+@app.route('/details')
+def details():
+    # Remove session data, this will log the user out
+   sql = "select * from details where id = 1";
+   account = get_db_result(sql)
+   # Redirect to login page
+   return render_template("details.html", value=account) 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     # Output message if something goes wrong...
@@ -125,6 +133,7 @@ def register():
 @app.route('/home',methods=['GET'])
 def home():
     # Check if user is loggedin
+    #Sensor_Data_Handler(myGlobalMessagePayload)
     if 'loggedin' in session:
         # User is loggedin show them the home page
         return render_template('home.html')
@@ -143,6 +152,7 @@ def on_message_sensors(client, userdata, msg):
     msg.payload = str(msg.payload.decode("utf-8","ignore"))
     myGlobalMessagePayload = json.loads(msg.payload)
     print(myGlobalMessagePayload)
+    
 
 '''
 def on_connect_status(client2, userdata, flags, rc):
@@ -155,11 +165,25 @@ def on_message_status(client2, userdata, msg):
     global PatientDeets
     msg.payload = str(msg.payload.decode("utf-8","ignore"))
     PatientDeets = json.loads(msg.payload)
-    print(PatientDeets)
+    #print(PatientDeets)
 
 def on_message(mosq, obj, msg):
     #print(msg.topic+" "+str(msg.qos)+" "+str(msg.payload))
     print(0)
+    
+        
+def Sensor_Data_Handler(json_Dict):
+    with app.test_request_context():
+        Haemoglobin = str(json_Dict['Haemoglobin'])
+        Body_Temp = str(json_Dict['Body_Temp'])
+        BUN = str(json_Dict['BUN'])
+        Liquid_Temp = str(json_Dict['Liquid_Temp'])
+        Blood_Pressure = str(json_Dict['Blood_Pressure'])
+        Pulse_Oximetry = str(json_Dict['Pulse_Oximetry'])
+        Pulse = str(json_Dict['Pulse'])
+        time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        sql="insert into details values ('1','Mrinalini','"+Haemoglobin+"','"+Body_Temp+"','"+BUN+"','"+Liquid_Temp+"','"+Blood_Pressure+"','"+Pulse_Oximetry+"','"+Pulse+"','"+time+"')"
+        execute_db(sql)
     
 @app.route('/chart-data')
 def chart_data():
@@ -170,6 +194,7 @@ def chart_data():
             yield f"data:{json_data}\n\n"
             time.sleep(3)
             #print(json_data)
+            Sensor_Data_Handler(myGlobalMessagePayload)
     return Response(generate_random_data(), mimetype='text/event-stream')
 
 
@@ -197,4 +222,4 @@ if __name__ == "__main__":
     mqttc.subscribe("health/#")
     mqttc.loop_start()
 
-    app.run(host='localhost', port=8080, debug=True)
+    app.run(debug=True)
