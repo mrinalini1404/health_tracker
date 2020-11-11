@@ -21,7 +21,7 @@ def get_db_result(sql):
                                  user='root',
                                  password='root',
                                  db='healthtracker')
-    print(sql)
+    #print(sql)
     try:
         with connection.cursor() as cursor:
             cursor.execute(sql)
@@ -90,11 +90,14 @@ def logout():
    return redirect(url_for('login'))
 
 
-@app.route('/details')
+@app.route('/details',methods=['GET', 'POST'])
 def details():
+   account=[] 
     # Remove session data, this will log the user out
-   sql = "select * from details where id = 1";
-   account = get_db_result(sql)
+   if request.method == 'POST' and 'id' in request.form: 
+       pat_id = request.form['id']
+       sql = "select * from details where id = '"+pat_id+"'";
+       account = get_db_result(sql)
    # Redirect to login page
    return render_template("details.html", value=account) 
 
@@ -181,16 +184,17 @@ def Sensor_Data_Handler(json_Dict):
         Blood_Pressure = str(json_Dict['Blood_Pressure'])
         Pulse_Oximetry = str(json_Dict['Pulse_Oximetry'])
         Pulse = str(json_Dict['Pulse'])
+        Pat_id = str(json_Dict['Patient_ID'])
         time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        sql="insert into details values ('1','Mrinalini','"+Haemoglobin+"','"+Body_Temp+"','"+BUN+"','"+Liquid_Temp+"','"+Blood_Pressure+"','"+Pulse_Oximetry+"','"+Pulse+"','"+time+"')"
+        sql="insert into details values ('"+Pat_id+"','"+Haemoglobin+"','"+Body_Temp+"','"+BUN+"','"+Liquid_Temp+"','"+Blood_Pressure+"','"+Pulse_Oximetry+"','"+Pulse+"','"+time+"')"
         execute_db(sql)
     
 @app.route('/chart-data')
 def chart_data():
     def generate_random_data():
         while True:
-            print(myGlobalMessagePayload) 
-            json_data = json.dumps({'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'Haemoglobin':myGlobalMessagePayload['Haemoglobin'],'Body_Temp':myGlobalMessagePayload['Body_Temp'],'BUN':myGlobalMessagePayload['BUN'],'Liquid_Temp':myGlobalMessagePayload['Liquid_Temp'],'Blood_Pressure':myGlobalMessagePayload['Blood_Pressure'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Pulse':myGlobalMessagePayload['Pulse'],'stat':PatientDeets['stat'],'value':PatientDeets['value']})
+            #print(myGlobalMessagePayload) 
+            json_data = json.dumps({'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'Art_Gas':myGlobalMessagePayload['Art_Gas'],'Haemoglobin':myGlobalMessagePayload['Haemoglobin'],'Body_Temp':myGlobalMessagePayload['Body_Temp'],'BUN':myGlobalMessagePayload['BUN'],'Liquid_Temp':myGlobalMessagePayload['Liquid_Temp'],'Blood_Pressure':myGlobalMessagePayload['Blood_Pressure'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Pulse':myGlobalMessagePayload['Pulse'],'stat':PatientDeets['stat'],'value':PatientDeets['value']})
             yield f"data:{json_data}\n\n"
             time.sleep(3)
             #print(json_data)

@@ -3,7 +3,16 @@
 {% block title %}Details{% endblock %}
 
 {% block content %}
-<h2>Details history</h2>
+<h2>Patient history</h2>
+<div>
+<form action="{{ url_for('details') }}" method="post">
+<label for="id">
+	<i class="fas fa-user"></i>
+</label>
+<input type="text" name="id" placeholder="Enter patient id" id="id" required>
+<input type="submit" value="Check">
+</form>
+</div>
 <div>
 	<center>
     <table style="width:100%"> 
@@ -24,14 +33,14 @@
         {% for row in value %}  
             <tr> 
             	<td></td>
-            	<td>{{row[9]}}</td>
-                <td>{{row[2]}}</td> 
-                <td>{{row[3]}}</td>
-                <td>{{row[4]}}</td> 
-                <td>{{row[5]}}</td>
-                <td>{{row[6]}}</td> 
-                <td>{{row[7]}}</td>
-                <td>{{row[8]}}</td> 
+            	<td>{{row[8]}}</td>
+                <td>{{row[1]}}</td> 
+                <td>{{row[2]}}</td>
+                <td>{{row[3]}}</td> 
+                <td>{{row[4]}}</td>
+                <td>{{row[5]}}</td> 
+                <td>{{row[6]}}</td>
+                <td>{{row[7]}}</td> 
             </tr> 
         {% endfor %} 
     </tbody> 
