@@ -169,7 +169,7 @@ def chart_data():
             json_data = json.dumps({'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),'Haemoglobin':myGlobalMessagePayload['Haemoglobin'],'Body_Temp':myGlobalMessagePayload['Body_Temp'],'BUN':myGlobalMessagePayload['BUN'],'Liquid_Temp':myGlobalMessagePayload['Liquid_Temp'],'Blood_Pressure':myGlobalMessagePayload['Blood_Pressure'],'Pulse_Oximetry':myGlobalMessagePayload['Pulse_Oximetry'],'Pulse':myGlobalMessagePayload['Pulse'],'stat':PatientDeets['stat'],'value':PatientDeets['value']})
             yield f"data:{json_data}\n\n"
             time.sleep(3)
-            print(json_data)
+            #print(json_data)
     return Response(generate_random_data(), mimetype='text/event-stream')
 
 
