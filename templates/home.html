@@ -358,13 +358,13 @@ source2.onmessage = function (event) {
 <script>
     $(document).ready(function () {
         const config4 = {
-            type: 'doughnut',
+            type: 'line',
             data: {
                 labels: [],
                 datasets: [{
-                    label: "Pulse oximetry",
+                    label: "Art_Gas",
                     backgroundColor: 'rgb(225, 255, 212)',
-                    borderColor: 'rgb(225, 255, 212)',
+                    borderColor: 'rgb(175, 255, 212)',
                     data: [],
                     fill: false,
                 }],
@@ -373,7 +373,7 @@ source2.onmessage = function (event) {
                 responsive: true,
                 title: {
                     display: true,
-                    text: 'Pulse Oximetry'
+                    text: 'Articular Gas'
                 },
                 tooltips: {
                     mode: 'index',
@@ -395,7 +395,7 @@ source2.onmessage = function (event) {
 
         source4.onmessage = function (event) {
             const data = JSON.parse(event.data);
-            config4.data.datasets[0].data.push(data.Pulse_Oximetry);
+            config4.data.datasets[0].data.push(data.Art_Gas);
             lineChart4.update();
         }
     });
